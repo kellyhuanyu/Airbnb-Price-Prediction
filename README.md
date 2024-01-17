@@ -1,5 +1,5 @@
 # Goal of the analysis
-Analyze AirBnB data in Vancouver, BC with categorical variables by linear Regression and predict the price of the AirBnB.
+Analyze AirBnB data in Vancouver, BC with categorical variables by linear regression and predict the price of the AirBnB.
 # Data Source
 This dataset is downloaded from Inside Airbnb (http://insideairbnb.com/get-the-data/).
 ### Column description
