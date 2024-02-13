@@ -1,0 +1,161 @@
+---
+title: 'IMT 573: Lab 06 - Linear Regression'
+author: "Kelly Liu"
+output: html_document
+---
+
+# Instructions
+
+Before beginning this assignment, please ensure you have access to R
+and RStudio.
+
+1. Update the lab number and title in the `title:` field.
+
+1. Replace the "Insert Your Name Here" text in the `author:` field
+   with your own full name. 
+
+1. Be sure to include well-documented (e.g. commented) code chucks,
+   figures and clearly written text-chunk explanations as
+   necessary. Any figures should be clearly labeled and appropriately
+   referenced within the text.
+
+1. When you have completed the assignment and have **checked** that
+   your code both runs in the Console and knits correctly when you
+   click `Knit to HTML`, rename the R Markdown file to
+   `YourLastName-YourFirstName-labX.Rmd`, where `X` is the lab number, 
+   knit the .rmd file as an html, and submit both the .rmd and the .html files 
+   on Canvas.
+   
+1. List any collaborators in the section below.
+
+# Collaborators
+CP Chan
+
+# Setup
+
+Do whatever setup you do here, such as loading libraries
+
+```{r setup}
+# Load standard libraries
+library(tidyverse)
+```
+
+# Question 1
+```{r}
+housing <- read.delim(file="/Users/Kelly/Desktop/UW/IMT573/pset06/boston.csv.bz2", sep = '\t')
+```
+
+
+## Question 1.1
+There's no missing value.
+```{r}
+missing_housing <- sum(is.na(housing))
+missing_housing
+row <- nrow(housing)
+row
+```
+
+## Question 1.2
+
+### Question 1.2.a
+(1) The bigger the average house size is, the higher the median value will be.
+```{r}
+ggplot(data = housing, aes(rm, medv)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(x="Avg House Size", y="Median value")
+```
+(2) The higher percentage of the lower status population, the lower the median value will be.
+```{r}
+ggplot(data = housing, aes(lstat, medv)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(x="Percent of lower status population", y="Median value")
+```
+(3) The lower the crime rate is, the higher the median value will be.
+```{r}
+ggplot(data = housing, aes(crim, medv)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(x="Crime Rate", y="Median value")
+```
+### Question 1.2.b
+(1) Average house size
+```{r}
+rm_medv <- lm(medv ~ rm, data=housing)
+summary(rm_medv)
+```
+(2) Lower status of the population
+```{r}
+lstat_medv <- lm(medv ~ lstat, data=housing)
+summary(lstat_medv)
+```
+(3) Crime rate
+```{r}
+crim_medv <- lm(medv ~ crim, data=housing)
+summary(crim_medv)
+```
+### Question 1.2.c
+(1) Average house size
+B0 is -34.671 and B1 is 9.102. B0 means when X=0, then Y=-34.671, which means when there is an average of 0 room of the house in the neighborhood, the median value would be $-34,671. B1 tells us if that's positive or negative correlation, and in this case it is positive correlation, which means the bigger the average house size it is in the neighborhood, the higher the median value will be. We can also see the p-value for the lower status is really small and is very close to 0, which makes us reject the null hypotheses. 
+
+(2) Lower status of the population
+B0 is 34.55 and B1 is -0.95. B0 means when X=0, then Y=34.55, which means when there is 0 percentage of the lower status of the population in the neighborhood, the median value would be $34,553. B1 tells us if that's positive or negative correlation, and in this case it is negative correlation, which means the lower the percentage of lower status population is, the higher the median value will be. We can also see the p-value for the lower status is really small and is very close to 0, which makes us reject the null hypotheses. 
+
+(3) Crime rate
+B0 is 24.03 and B1 is -0.42. B0 means when X=0, then Y=24.03, which means when there is 0 crime rate in the neighborhood, the median value would be $24,033. B1 tells us if that's positive or negative correlation, and in this case it is negative correlation, which means the lower the crime rate is, the higher the median value will be. We can also see the p-value for the crime rate is really small and is very close to 0, which makes us reject the null hypotheses. 
+
+### Question 1.2.d
+It makes a lot of sense for the median value of the house to be higher if there are more rooms in the house, since the houses are very likely to be bigger. 
+I think for lower status people, they will tend to find neighborhood with a lower house price, and people with the similar income rate will be in the same neighborhoods, and as time goes by, there will more and more lower status people in the same neighborhoods.
+Lastly, it also makes sense for the median value to be lower in the neighborhoods with higher crime rates since people will not feel safe, and the house owners need to lower the price since it will be harder to sell the houses there.
+
+## Question 1.3
+
+## Question 1.4
+The H0 is the null hypotheses of assuming that the median value of the houses in the neighborhoods has nothing to do with the average house size. 
+
+## Question 1.5
+All three predictors are highly statistically significant to reject the null hypotheses. 
+```{r}
+multi_medv <- lm(formula = medv ~ rm + lstat + crim, data = housing)
+summary(multi_medv)
+```
+## Question 1.6
+The results for the average house size and lower status proportion of people are both highly statistically significant to reject the null hypotheses, and for the "indus" which is the proportion of non-retail business acres per neighborhood, it has a high p-value which fails to reject the null hypotheses.
+```{r}
+multi_medv_2 <- lm(formula = medv ~ rm + lstat + indus, data = housing)
+summary(multi_medv_2)
+```
+## Question 1.7
+The B0 and B1 in simple regression differ in multiple regressions because there's only B0 and B1 in the simple regression while there are B0, B1, B2...etc in the multiple regressions. However, both results hold the same story which all predictors reject the null hypotheses.
+
+# Question 2
+
+## Question 2.1
+Neighborhoods with more evictions see more 311 calls, with 0.048 more calls.
+
+## Question 2.2
+It has three * which is statistically significant in 1% level, which is also statistically significant in 5% level. 
+
+## Question 2.3
+Poverty rate and 311 calls is negatively correlated. The more poor people in the neighborhoods, there will be less 311 calls. With 10 pct point more poverty, there will be 1.4 less 311 calls. 
+
+## Question 2.4
+The relationship between white race and 311 calls is negatively correlated, which means if there are more white people in the neighborhoods, there will be less 311 calls (which is surprising for me).
+
+## Question 2.5
+Median age is statistically significant in the 1% level and it is positively correlated with 311 calls, which means the older the median age, the more 311 calls there will be. 
+
+## Question 2.6
+Greater housing density lowered the number of 311 calls. One unit higher of the housing density will result in 0.13 less in 311 calls.
+
+## Question 2.7
+Austin, TX has more calls than Philadelphia by 0.56 calls.
+
+
+
+
+
+
+
